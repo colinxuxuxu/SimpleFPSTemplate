@@ -1,4 +1,5 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+//Tutorial by Tom Looman
 
 #include "FPSCharacter.h"
 #include "FPSProjectile.h"
@@ -7,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimSequence.h"
+#include "FPSBombActor.h"
 
 
 AFPSCharacter::AFPSCharacter()
@@ -38,6 +40,8 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
+
+	PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &AFPSCharacter::SpawnBomb);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFPSCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFPSCharacter::MoveRight);
@@ -120,8 +124,15 @@ void AFPSCharacter::Fire()
 	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
+void AFPSCharacter::SpawnBomb()
+{
+	//needs to assign bombclass in blueprint in UE editor
+	//add the new action in UE5 edit/projectsetting/Input/bindings
+	AFPSBombActor* MyBomb = GetWorld()->SpawnActor<AFPSBombActor>(BombClass, GetActorLocation(), GetActorRotation());
+}
 
-void AFPSCharacter::MoveForward(float Value)
+
+void AFPSCharacter::MoveForward(float Value)// -1.0f <= Value <= 1.0f
 {
 	if (Value != 0.0f)
 	{

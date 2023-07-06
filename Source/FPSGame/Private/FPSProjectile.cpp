@@ -1,4 +1,5 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Tutorial by Tom Looman
 
 #include "FPSProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -6,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
-AFPSProjectile::AFPSProjectile() 
+AFPSProjectile::AFPSProjectile()
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
@@ -62,17 +63,19 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		FVector Scale = OtherComp->GetComponentScale();
 		Scale *= 0.8f;
 
+		//if scale is < 0.5f, destroy the actor
 		if (Scale.GetMin() < 0.5f)
 		{
 			OtherActor->Destroy();
 		}
-		else
+		else//set the world scale
 		{
 			OtherComp->SetWorldScale3D(Scale);
 		}
 
+		//changing the color
 		UMaterialInstanceDynamic* MatInst = OtherComp->CreateDynamicMaterialInstance(0);
-		if (MatInst)
+		if (MatInst)//check for nullptr
 		{
 			FLinearColor NewColor = FLinearColor::MakeRandomColor();
 
